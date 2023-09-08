@@ -68,7 +68,7 @@ async def StartButtons(event, role):
         buttons = [[Button.inline("اضف رقم", "add_number")]]
     elif role == 1:
         buttons = [[Button.inline("اضف رقم", "add_number")], [Button.inline("حذف رقم", "remove_number")]]
-    await event.reply("لاضافة رقم اضغط على الزر اسفله لبدأ عملية اضافة الرقم", buttons=buttons)
+    await event.reply("**لاضافة رقم اضغط على الزر اسفله لبدأ عملية اضافة الرقم**", buttons=buttons)
 
 
 # BOT START
@@ -98,7 +98,7 @@ async def Callbacks_(event):
     try:
         async with bot.conversation(event.chat_id, timeout=200) as conv:
             # verification code
-            get_number= await conv.send_message("*ارسل الرقم لحذفه*")
+            get_number= await conv.send_message("**ارسل الرقم لحذفه**")
             remove_number = await conv.get_response()
             remove_number = (remove_number.text).replace('+', '').replace(' ', '')
             for session in sessions:
