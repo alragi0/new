@@ -179,8 +179,6 @@ async def set_points_callback(event):
         await event.respond("فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط.")
 
 # تشغيل العميل
-client.start()
-client.run_until_disconnected()
 
 #####################################################################################
 # STOP COLLECT POINTS
