@@ -158,7 +158,7 @@ async def Callbacks(event):
 # STOP COLLECT POINTS
 @bot.on(events.NewMessage(pattern=r'.ايقاف الجمع'))
 async def StopCollectPoints(event):
-    global collect
+    global stop_earn
     if event.chat_id in owner_id:
         collect = False
         stop_collect = await event.reply('**تم ايقاف الجمع**')
