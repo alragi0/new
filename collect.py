@@ -156,7 +156,7 @@ async def Callbacks(event):
     
 #####################################################################################
 # STOP COLLECT POINTS
-@bot.on(events.NewMessage(pattern=r'.ايقاف الجمع ?(.*)'))
+@bot.on(events.NewMessage(pattern=r'.ايقاف الجمع'))
 async def StopCollectPoints(event):
     if event.chat_id in owner_id:
         collect = False
