@@ -41,7 +41,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
 
             async with bot.conversation(event.chat_id, timeout=300) as conv:
                 # verification code
-                verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. صع علامة ( - ) بين كل رقم:")
+                verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. ضع علامة ( - ) بين كل رقم:")
                 response_verification_code = await conv.get_response()
                 verification_code = str(response_verification_code.message).replace('-', '')
 
