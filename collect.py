@@ -111,10 +111,10 @@ async def Callbacks_(event):
         print (error)
         
     if in_session == True:
-        await event.reply("تم حذف الرقم بنجاح")
+        await event.reply("**تم حذف الرقم بنجاح ✅**")
         sessions = json.load(open("sessions/sessions.json"))
     else:
-        await event.reply("هذا الرقم غير موجود")
+        await event.reply("**هذا الرقم غير موجود ⛔**")
         
     if event.chat_id in owner_id:
         await StartButtons(event, 1)
@@ -139,7 +139,7 @@ async def Callbacks(event):
         # get information from user
         async with bot.conversation(event.chat_id, timeout=300) as conv:
             
-            await conv.send_message('**ارسل رقم الهاتف مع رمز الدولة:**')
+            await conv.send_message('__ارسل رقم الهاتف مع رمز الدولة:__')
             phone_number_msg = await conv.get_response()
             phone_number_msg = phone_number_msg.text
 
@@ -150,6 +150,7 @@ async def Callbacks(event):
 
 **جاري تسجيل الدخول 👨🏽‍💻🔄**
 ''')
+
         result = await Add_NUMBER(event, int(api_id), api_hash, phone_number_msg)
         await event.reply(result)
     except Exception as error:
