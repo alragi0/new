@@ -161,7 +161,7 @@ async def Callbacks(event):
         await StartButtons(event, 2)
     
     # set points 
-@client.on(events.CallbackQuery(data="set_points"))
+@bot.on(events.CallbackQuery(data="set_points"))
 async def set_points_callback(event):
     # قم بتنفيذ إجراءات تعيين النقاط هنا
     await event.answer("الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):")
