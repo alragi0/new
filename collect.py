@@ -160,25 +160,33 @@ async def Callbacks(event):
     else:
         await StartButtons(event, 2)
     
+
 @bot.on(events.CallbackQuery(data="set_points"))
 async def set_points_callback(event):
-    # قم بتنفيذ إجراءات تعيين النقاط هنا
     await event.answer("الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):")
-    
+
     try:
-        response = await event.client.listen(event.chat_id)  # استخدم event.client بدلاً من client
-        points = response.text
-        
+        response = await event.client.listen(event.chat_id)
+        points = response.text.strip()
         try:
             points = int(points)
             if 1000 <= points <= 5000:
+                # قم بإرسال رسالة تأكيد للمستخدم
                 await event.respond(f"تم تعيين {points} نقطة بنجاح!")
+
+                # قم بتحديث قاعدة البيانات sessions بناءً على النقاط المعينة
+                # يتعين عليك معرفة كيفية تحديث البيانات في قاعدة البيانات الخاصة بك واستخدامها هنا
+                # على سبيل المثال، يمكنك تحديث البيانات في المتغير sessions وحفظها في قاعدة البيانات الخاصة بك
+                # وذلك باستخدام اللغة والأداة التي تستخدمها.
+
             else:
                 await event.respond("فشل في تعيين النقاط. الرجاء التأكد من أن العدد بين 1000 و 5000.")
         except ValueError:
             await event.respond("فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط.")
     except Exception as error:
         await event.respond("حدثت مشكلة أثناء معالجة طلبك.")
+
+#...
 
 # تشغيل العميل
 
