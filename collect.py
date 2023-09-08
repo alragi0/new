@@ -68,7 +68,7 @@ async def StartButtons(event, role):
         buttons = [[Button.inline("اضف رقم", "add_number")]]
     elif role == 1:
         buttons = [[Button.inline("اضف رقم", "add_number")], [Button.inline("حذف رقم", "remove_number")]]
-    await event.reply("**لاضافة رقم اضغط على الزر اسفله لبدأ عملية اضافة الرقم**", buttons=buttons)
+    await event.reply("**لاضافة رقم اضغط على الزر اسفله لبدأ عملية اضافة الارقام.\n [مطور البوت](https://t.me/yynxx)** ", buttons=buttons)
 
 
 # BOT START
