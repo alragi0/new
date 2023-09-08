@@ -160,23 +160,25 @@ async def Callbacks(event):
     else:
         await StartButtons(event, 2)
     
-# set points 
 @bot.on(events.CallbackQuery(data="set_points"))
 async def set_points_callback(event):
     # قم بتنفيذ إجراءات تعيين النقاط هنا
     await event.answer("الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):")
     
-    response = await client.listen(event.chat_id)  # استخدم متغير client
-    points = response.text
-    
     try:
-        points = int(points)
-        if 1000 <= points <= 5000:
-            await event.respond(f"تم تعيين {points} نقطة بنجاح!")
-        else:
-            await event.respond("فشل في تعيين النقاط. الرجاء التأكد من أن العدد بين 1000 و 5000.")
-    except ValueError:
-        await event.respond("فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط.")
+        response = await event.client.listen(event.chat_id)  # استخدم event.client بدلاً من client
+        points = response.text
+        
+        try:
+            points = int(points)
+            if 1000 <= points <= 5000:
+                await event.respond(f"تم تعيين {points} نقطة بنجاح!")
+            else:
+                await event.respond("فشل في تعيين النقاط. الرجاء التأكد من أن العدد بين 1000 و 5000.")
+        except ValueError:
+            await event.respond("فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط.")
+    except Exception as error:
+        await event.respond("حدثت مشكلة أثناء معالجة طلبك.")
 
 # تشغيل العميل
 
@@ -251,7 +253,6 @@ async def JoinChannelPrivate(client, username):
 
 # COLLECT NOW
 async def StartCollect(event, bot_username):
-    
     # load sessions
     sessions = json.load(open("sessions/sessions.json"))
     while collect != False:
@@ -270,8 +271,8 @@ async def StartCollect(event, bot_username):
                 phone = str(sessions[session]["phone"])
                 
                 client = TelegramClient("sessions/"+(phone), api_id, api_hash)
-                
                 await client.connect()
+
                 user = await client.get_me()
                 if user == None:
                     await bot.send_message(entity=owner_id[0] ,message=f"**الرقم :** {phone}\n\nهذا الرقم لا يعمل")
@@ -356,7 +357,7 @@ async def StartCollect(event, bot_username):
                                 await bot.send_message(entity=owner_id[0] ,message=f"**الرقم :** {phone}\n\nالبوت لا يستجيب بسرعه. تم تخطي هذا الرقم")
                 
                 
-                # disconnect
+                      # disconnect
                 try:
                     await client.disconnect()
                 except Exception as error:
