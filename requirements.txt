@@ -1,3 +1,4 @@
 telethon
 sqlalchemy
 pymysql
+MySQLdb
