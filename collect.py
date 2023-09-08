@@ -166,7 +166,7 @@ async def set_points_callback(event):
     # قم بتنفيذ إجراءات تعيين النقاط هنا
     await event.answer("الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):")
     
-    response = await sessions.listen(event.chat_id)  # استخدم متغير sessions بدلاً من client
+    response = await client.listen(event.chat_id)  # استخدم متغير client
     points = response.text
     
     try:
