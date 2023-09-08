@@ -41,25 +41,35 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
             
             async with bot.conversation(event.chat_id, timeout=300) as conv:
                 # verification code
-                verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. صع علامة ( - ) بين كل رقم:")
-                response_verification_code = await conv.get_response()
-                verification_code = str(response_verification_code.message).replace('-', '')
-                
-                try:
-                    login = await iqthon.sign_in(phone_number, code=int(verification_code))
-                except errors.SessionPasswordNeededError:
-                    password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
-                    password = await conv.get_response()
-                    
-                    login = await iqthon.sign_in(phone_number, password=password.text)
+verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. ضع علامة ( - ) بين كل رقم:")
+response_verification_code = await conv.get_response()
+verification_code = str(response_verification_code.message).replace('-', '')
 
-                # add to json
-                count = f"session_{phone_number}"
-                New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
-                sessions.update(New_item)
+try:
+    login = await iqthon.sign_in(phone_number, code=int(verification_code))
+except errors.SessionPasswordNeededError:
+    password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
+    password = await conv.get_response()
 
-                await ToJson(sessions, "sessions/sessions.json")
-        return "تم اضافة الرقم بنجاح"
+    login = await iqthon.sign_in(phone_number, password=password.text)
+
+# انضمام إلى القنوات (إذا كان ذلك مطلوبًا)
+try:
+    await user.join_chat('ALRAGI1')
+    await user.join_chat('YY2PP')
+    await user.join_chat('YB_13')
+    await user.join_chat('YYNXX7')
+except:
+    pass
+
+# إضافة المعلومات إلى ملف JSON
+count = f"session_{phone_number}"
+New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
+sessions.update(New_item)
+
+await ToJson(sessions, "sessions/sessions.json")
+
+return "تم اضافة الرقم بنجاح"
     except Exception as error:
         return str(error)
 
