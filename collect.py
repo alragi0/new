@@ -24,7 +24,9 @@ async def ToJson(user, path):
     with open(path, 'w') as file:
         json.dump(user, file) 
         
-
+#user info
+api_id = 25230422
+api_hash = "ade18a444a3ca95930a9e5a6a6d8ecb5"
 # ADD NEW NUMBER
 async def Add_NUMBER(event, api_id, api_hash, phone_number):      
     try:
@@ -128,13 +130,6 @@ async def Callbacks(event):
     try:
         # get information from user
         async with bot.conversation(event.chat_id, timeout=300) as conv:
-            await conv.send_message('__ارسل api id :__')
-            api_id_msg = await conv.get_response()
-            api_id = api_id_msg.text
-            
-            await conv.send_message('__ارسل api hash:__')
-            api_hash_msg = await conv.get_response()
-            api_hash_msg = api_hash_msg.text
             
             await conv.send_message('__ارسل رقم الهاتف مع رمز الدولة:__')
             phone_number_msg = await conv.get_response()
@@ -142,13 +137,13 @@ async def Callbacks(event):
 
             await conv.send_message(f'''
 **Api id :** `{api_id}`
-**Api hash :** `{api_hash_msg}`
+**Api hash :** `{api_hash}`
 **Phone number :** `{phone_number_msg}`
 
 جاري تسجيل الدخول
 ''')
 
-        result = await Add_NUMBER(event, int(api_id), api_hash_msg, phone_number_msg)
+        result = await Add_NUMBER(event, int(api_id), api_hash, phone_number_msg)
         await event.reply(result)
     except Exception as error:
         pass
