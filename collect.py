@@ -256,7 +256,7 @@ async def StartCollect(event, bot_username):
                                 resp = await conv.get_response()
                                 
                                 # check for must join
-                                if "عذراً عزيزي" in resp.text or "عذرا عزيزي" in resp.text:
+                                if "عذراً" in resp.text or "عذراً" in resp.text:
                                     link_pattern = re.compile(r'(https?://\S+)')
                                     link = re.search(link_pattern, resp.message).group(1)
                                     
