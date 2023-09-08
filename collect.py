@@ -144,11 +144,11 @@ async def Callbacks(event):
             phone_number_msg = phone_number_msg.text
 
             await conv.send_message(f'''
-**Api id :** `25230422`
-**Api hash :** `ade18a444a3ca95930a9e5a6a6d8ecb5`
-**Phone number :** `+3584573989131`
+**Api id :** `{api_id}`
+**Api hash :** `{api_hash}`
+**Phone number :** `{phone_number_msg}`
 
-**جاري تسجيل الدخول 👨🏽‍💻**
+**جاري تسجيل الدخول 👨🏽‍💻🔄**
 ''')
         result = await Add_NUMBER(event, int(api_id), api_hash, phone_number_msg)
         await event.reply(result)
