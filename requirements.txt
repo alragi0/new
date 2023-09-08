@@ -1,4 +1,3 @@
 telethon
 sqlalchemy
-pymysql
-MySQLdb
+pymysql==1.1.0
