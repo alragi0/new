@@ -24,8 +24,9 @@ sessions = json.load(open("sessions/sessions.json"))
 async def ToJson(user, path):
     with open(path, 'w') as file:
         json.dump(user, file) 
-        
-#user info
+#  points 
+points = 1000       
+# user info
 api_id = 25230422
 api_hash = "ade18a444a3ca95930a9e5a6a6d8ecb5"
 # ADD NEW NUMBER
@@ -64,24 +65,22 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
 
 # KEYBOARD
 async def StartButtons(event, role):
+    buttons = []
+
     if role == 2:
-        buttons = [[Button.inline("اضف رقم", "add_number")]]
+        buttons.append([Button.inline("اضف رقم", "add_number")])
+        buttons.append([Button.inline("تعيين النقاط", "set_points")])
     elif role == 1:
-        buttons = [[Button.inline("اضف رقم", "add_number")], [Button.inline("حذف رقم", "remove_number")]]
+        buttons.append([Button.inline("اضف رقم", "add_number")])
+        buttons.append([Button.inline("حذف رقم", "remove_number")])
+        buttons.append([Button.inline("تعيين النقاط", "set_points")])
+
     await event.reply("**لاضافة حساب اضغط على الزر بالأسفل لبدأ عملية اضافة الارقام.\n [مطور البوت](https://t.me/yynxx)** ", buttons=buttons)
-# BOT START
-@bot.on(events.NewMessage(pattern='/start'))
+
+#...
+
+@bot.on(eventضs.NewMessage(pattern='/start'))
 async def BotOnStart(event):
-    
-    if event.chat_id in owner_id:
-        await StartButtons(event, 1)
-    else:
-        await StartButtons(event, 2)
-
-# DELETE NUMBER TELEGRAM BOT 
-@bot.on(events.CallbackQuery(data="back_to_menu"))
-async def Callbacks__(event):
-
     if event.chat_id in owner_id:
         await StartButtons(event, 1)
     else:
@@ -96,7 +95,7 @@ async def Callbacks_(event):
     try:
         async with bot.conversation(event.chat_id, timeout=200) as conv:
             # verification code
-            get_number= await conv.send_message("**ارسل الرقم لحذفه**")
+            get_number= await conv.send_message("**ارسل الرقم  الذي تريد حذفه ❓. **")
             remove_number = await conv.get_response()
             remove_number = (remove_number.text).replace('+', '').replace(' ', '')
             for session in sessions:
@@ -111,10 +110,10 @@ async def Callbacks_(event):
         print (error)
         
     if in_session == True:
-        await event.reply("**تم حذف الرقم بنجاح ✅**")
+        await event.reply("**- تم حذف الرقم بنجاح ✅. **")
         sessions = json.load(open("sessions/sessions.json"))
     else:
-        await event.reply("**هذا الرقم غير موجود ⛔**")
+        await event.reply("**- هذا الرقم غير موجود ⛔. **")
         
     if event.chat_id in owner_id:
         await StartButtons(event, 1)
@@ -139,7 +138,7 @@ async def Callbacks(event):
         # get information from user
         async with bot.conversation(event.chat_id, timeout=300) as conv:
             
-            await conv.send_message('__ارسل رقم الهاتف مع رمز الدولة:__')
+            await conv.send_message('**- ارسل رقم الهاتف مع رمز الدولة📳. \n- كمثال 👈🏼:  +3584573989131**')
             phone_number_msg = await conv.get_response()
             phone_number_msg = phone_number_msg.text
 
@@ -186,7 +185,7 @@ async def StartCollectPoints(event):
             task = asyncio.create_task(StartCollect(event, bot_username))
             await task
         
-        order = await event.reply('**تم الجمع من جميع الحسابات**')
+        order = await event.reply('**- تم الجمع من جميع الحسابات ✅. \n- وتمت عملية إيقاف الجمع بنجاح ✅. **')
 
 
 # JOIN PUBLIC
@@ -197,7 +196,7 @@ async def JoinChannel(client, username):
     except errors.FloodWaitError as error:
         return [False, f'تم حظر هذا الحساب من الانضمام للقنوات لمدة : {error.seconds} ثانية']
     except errors.ChannelsTooMuchError:
-        return [False, 'هذا الحساب وصل للحد الاقصى من القنوات التي يستطيع الانضمام لها']
+        return [False, '**- هذا الحساب وصل للحد الاقصى من القنوات التي يستطيع الانضمام لها⛔.**']
     except errors.ChannelInvalidError:
         return [False, False]
     except errors.ChannelPrivateError:
@@ -218,7 +217,7 @@ async def JoinChannelPrivate(client, username):
     except errors.UsersTooMuchError:
         return [False, False]
     except errors.ChannelsTooMuchError:
-        return [False, 'هذا الحساب وصل للحد الاقصى من القنوات التي يستطيع الانضمام لها']
+        return [False, '**- هذا الحساب وصل للحد الاقصى من القنوات التي يستطيع الانضمام لها🚫.**']
     except errors.InviteHashEmptyError:
         return [False, False]
     except errors.InviteHashExpiredError:
@@ -297,7 +296,7 @@ async def StartCollect(event, bot_username):
                                     
                                     # check points
                                     number_str = (channel_details.message).split('نقاطك الحاليه :')[1].strip()
-                                    if int(number_str.strip()) >= 2000:
+                                    if int(number_str.strip()) >= points:
                                         await bot.send_message(entity=owner_id[0] ,message=f"**الرقم :** {phone}\n\n__لقد وصل هذا الحساب الى {number_str} نقطة__")
                                         break
                                                              
