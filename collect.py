@@ -140,10 +140,10 @@ async def Callbacks(event):
         async with bot.conversation(event.chat_id, timeout=300) as conv:
             
             await conv.send_message('**ارسل رقم الهاتف مع رمز الدولة:**')
-phone_number_msg = await conv.get_response()
-phone_number_msg = phone_number_msg.text
+            phone_number_msg = await conv.get_response()
+            phone_number_msg = phone_number_msg.text
 
-await conv.send_message(f'''
+            await conv.send_message(f'''
 *Api id :* `{api_id}`
 *Api hash :* `{api_hash}`
 *Phone number :* `{phone_number_msg}`
