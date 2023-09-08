@@ -163,29 +163,27 @@ async def Callbacks(event):
 
 @bot.on(events.CallbackQuery(data="set_points"))
 async def set_points_callback(event):
-    await event.answer("الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):")
+    global sessions
 
-    try:
-        response = await event.client.listen(event.chat_id)
-        points = response.text.strip()
+    async with bot.conversation(event.chat_id, timeout=300) as conv:
+        await conv.send_message("**- الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):**")
+        point_msg = await conv.get_response()
+        point = point_msg.text.strip()
+        
         try:
-            points = int(points)
+            points = int(point)
             if 1000 <= points <= 5000:
-                # قم بإرسال رسالة تأكيد للمستخدم
-                await event.respond(f"تم تعيين {points} نقطة بنجاح!")
-
-                # قم بتحديث قاعدة البيانات sessions بناءً على النقاط المعينة
-                # يتعين عليك معرفة كيفية تحديث البيانات في قاعدة البيانات الخاصة بك واستخدامها هنا
-                # على سبيل المثال، يمكنك تحديث البيانات في المتغير sessions وحفظها في قاعدة البيانات الخاصة بك
-                # وذلك باستخدام اللغة والأداة التي تستخدمها.
-
+                # هنا يمكنك إجراء إجراءات إضافية على أساس النقاط المعينة
+                await conv.send_message(f"**- تم تثبيت تجميع النقاط على العدد {points} بنجاح ✅.**")
             else:
-                await event.respond("فشل في تعيين النقاط. الرجاء التأكد من أن العدد بين 1000 و 5000.")
+                await conv.send_message("**- لقد فشلت عملية تعيين النقاط ❓\n الرجاء التأكد من أن الرقم المدخل عدد صحيح وواقع بين الرقم 1000 والرقم 5000 ثم حاول مرة أخرى.**")
         except ValueError:
-            await event.respond("فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط.")
-    except Exception as error:
-        await event.respond("حدثت مشكلة أثناء معالجة طلبك.")
+            await conv.send_message("**- فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط❌.**")
 
+    if event.chat_id in owner_id:
+        await StartButtons(event, 1)
+    else:
+        await StartButtons(event, 2)
 #...
 
 # تشغيل العميل
