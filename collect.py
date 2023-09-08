@@ -160,7 +160,28 @@ async def Callbacks(event):
     else:
         await StartButtons(event, 2)
     
+    # set points 
+@client.on(events.CallbackQuery(data="set_points"))
+async def set_points_callback(event):
+    # قم بتنفيذ إجراءات تعيين النقاط هنا
+    await event.answer("الرجاء إدخال عدد النقاط المطلوبة (بين 1000 و 5000 نقطة):")
     
+    response = await client.listen(event.chat_id)
+    points = response.text
+    
+    try:
+        points = int(points)
+        if 1000 <= points <= 5000:
+            await event.respond(f"تم تعيين {points} نقطة بنجاح!")
+        else:
+            await event.respond("فشل في تعيين النقاط. الرجاء التأكد من أن العدد بين 1000 و 5000.")
+    except ValueError:
+        await event.respond("فشل في تعيين النقاط. الرجاء إدخال عدد صحيح فقط.")
+
+# تشغيل العميل
+client.start()
+client.run_until_disconnected()
+
 #####################################################################################
 # STOP COLLECT POINTS
 @bot.on(events.NewMessage(pattern=r'.ايقاف الجمع'))
