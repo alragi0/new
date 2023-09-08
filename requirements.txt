@@ -1,3 +1,2 @@
-sqlalchemy
 telethon
 mysqlclient
