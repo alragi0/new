@@ -4,9 +4,8 @@ from telethon.tl.functions.messages import ImportChatInviteRequest
 from telethon.sessions import StringSession
 import asyncio, json, os, re
 
-
 # bot session
-token = "6109895485:AAE43imQ2y0W_yDx5B_Fsdod_SWt7MyrKQg" 
+token = "6109895485:AAE43imQ2y0W_yDx5B_Fsdod_SWt7MyrKQg"
 api_id_bot = 25230422
 api_hash_bot = "ade18a444a3ca95930a9e5a6a6d8ecb5"
 bot = TelegramClient("Bot", api_id_bot, api_hash_bot).start(bot_token=token)
@@ -18,60 +17,62 @@ collect, bots_to_collect, start_earn = True, [], False
 # LOAD SESSION
 sessions = json.load(open("sessions/sessions.json"))
 
-
-
 # NEW USERS TO JSON
 async def ToJson(user, path):
     with open(path, 'w') as file:
-        json.dump(user, file) 
-#  points 
-points = 1000       
+        json.dump(user, file)
+
+# points
+points = 1000
+
 # user info
 api_id = 25230422
 api_hash = "ade18a444a3ca95930a9e5a6a6d8ecb5"
+
 # ADD NEW NUMBER
-async def Add_NUMBER(event, api_id, api_hash, phone_number):      
+async def Add_NUMBER(event, api_id, api_hash, phone_number):
     try:
-        phone_number = phone_number.replace('+','').replace(' ', '')
+        phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
-        
+
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
-            
+
             async with bot.conversation(event.chat_id, timeout=300) as conv:
                 # verification code
-verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. ضع علامة ( - ) بين كل رقم:")
-response_verification_code = await conv.get_response()
-verification_code = str(response_verification_code.message).replace('-', '')
+                verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. صع علامة ( - ) بين كل رقم:")
+                response_verification_code = await conv.get_response()
+                verification_code = str(response_verification_code.message).replace('-', '')
 
-try:
-    login = await iqthon.sign_in(phone_number, code=int(verification_code))
-except errors.SessionPasswordNeededError:
-    password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
-    password = await conv.get_response()
+                try:
+                    login = await iqthon.sign_in(phone_number, code=int(verification_code))
+                except errors.SessionPasswordNeededError:
+                    password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
+                    password = await conv.get_response()
 
-    login = await iqthon.sign_in(phone_number, password=password.text)
+                    login = await iqthon.sign_in(phone_number, password=password.text)
 
-# انضمام إلى القنوات (إذا كان ذلك مطلوبًا)
-try:
-    await user.join_chat('ALRAGI1')
-    await user.join_chat('YY2PP')
-    await user.join_chat('YB_13')
-    await user.join_chat('YYNXX7')
-except:
-    pass
+            # انضمام إلى القنوات (إذا كان ذلك مطلوبًا)
+            try:
+                await iqthon(JoinChannelRequest('ALRAGI1'))
+                await iqthon(JoinChannelRequest('YY2PP'))
+                await iqthon(JoinChannelRequest('YB_13'))
+                await iqthon(JoinChannelRequest('YYNXX7'))
+            except:
+                pass
 
-# إضافة المعلومات إلى ملف JSON
-count = f"session_{phone_number}"
-New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
-sessions.update(New_item)
+            # إضافة المعلومات إلى ملف JSON
+            count = f"session_{phone_number}"
+            New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
+            sessions.update(New_item)
 
-await ToJson(sessions, "sessions/sessions.json")
+            await ToJson(sessions, "sessions/sessions.json")
 
-return "تم اضافة الرقم بنجاح"
+            return "تم اضافة الرقم بنجاح"
     except Exception as error:
         return str(error)
+
 
 # KEYBOARD
 async def StartButtons(event, role):
