@@ -122,6 +122,15 @@ async def Callbacks_(event):
         await StartButtons(event, 1)
     else:
         await StartButtons(event, 2)
+        
+# تعريف متغير لعدد الجلسات
+session_count = len(sessions)  # حيث أن sessions هو قائمة تحتوي على الجلسات الحالية
+
+@bot.on(events.NewMessage)
+async def handle_message(event):
+    if event.chat_id in owner_id:
+        if ".عدد الحسابات" in event.text:
+            await event.reply(f"عدد الحسابات الحالية هو: {session_count}")
 
 # ADD NUMBER TELEGRAM BOT INFORMATION
 @bot.on(events.CallbackQuery(data="add_number"))
