@@ -118,32 +118,27 @@ async def Callbacks__(event):
 # DELETE NUMBER TELEGRAM BOT 
 @bot.on(events.CallbackQuery(data="remove_number"))
 async def Callbacks_(event):
-    global sessions
-    
-    delete, sessions, in_session = await event.delete(), json.load(open("sessions/sessions.json")), False
+    delete, in_session = await event.delete(), False
     try:
         # تحديد الرقم من المستخدم
-async with bot.conversation(event.chat_id, timeout=200) as conv:
-    
-    get_number = await conv.send_message("__ارسل الرقم لحذفه__")
-    remove_number = await conv.response()
-    remove_number = (remove_number.text).replace('+', '').replace(' ', '')
+        async with bot.conversation(event.chat_id, timeout=200) as conv:
+            get_number_message = await conv.send_message("__ارسل الرقم لحذفه__")
+            remove_number_message = await conv.get_response()
+            remove_number = (remove_number_message.text).replace('+', '').replace(' ', '')
 
-    # البحث عن الجلسة التي تحتوي على الرقم وحذفها
-    session.query(Session).filter(Session.phone == remove_number).delete()
+        # البحث عن الجلسة التي تحتوي على الرقم وحذفها من قاعدة البيانات
+        session.query(SessionTable).filter(SessionTable.phone == remove_number).delete()
 
-    # تأكيد التغييرات (حفظ الحذف في قاعدة البيانات)
-    session.commit()
-
+        # تأكيد التغييرات (حفظ الحذف في قاعدة البيانات)
+        session.commit() 
+        in_session = True
     except Exception as error:
-        print (error)
-        
-    if in_session == True:
+        print(error)
+
+    if in_session:
         await event.reply("تم حذف الرقم بنجاح")
-        sessions = json.load(open("sessions/sessions.json"))
     else:
         await event.reply("هذا الرقم غير موجود")
-        
     if event.chat_id in owner_id:
         await StartButtons(event, 1)
     else:
