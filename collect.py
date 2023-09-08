@@ -79,7 +79,7 @@ async def StartButtons(event, role):
 
 #...
 
-@bot.on(eventضs.NewMessage(pattern='/start'))
+@bot.on(events.NewMessage(pattern='/start'))
 async def BotOnStart(event):
     if event.chat_id in owner_id:
         await StartButtons(event, 1)
