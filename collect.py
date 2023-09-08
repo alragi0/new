@@ -128,11 +128,12 @@ async with bot.conversation(event.chat_id, timeout=200) as conv:
     remove_number_message = await conv.get_response()
     remove_number = (remove_number_message.text).replace('+', '').replace(' ', '')
 
-# البحث عن الجلسة التي تحتوي على الرقم وحذفها
-session.query(Session).filter(Session.phone == remove_number).delete()
+    # البحث عن الجلسة التي تحتوي على الرقم وحذفها
+    session.query(Session).filter(Session.phone == remove_number).delete()
 
-# تأكيد التغييرات (حفظ الحذف في قاعدة البيانات)
-session.commit() 
+    # تأكيد التغييرات (حفظ الحذف في قاعدة البيانات)
+    session.commit()
+
     except Exception as error:
         print (error)
         
