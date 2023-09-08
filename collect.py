@@ -1,35 +1,8 @@
 from telethon import TelegramClient, events, Button, errors
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.sessions import StringSession
 import asyncio, json, os, re
-from sqlalchemy import create_engine, Column, Integer, String, MetaData
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
-# تكوين اتصال قاعدة البيانات (استخدم معلومات الاتصال الخاصة بك)
-db_url = "mysql://root:mTor5MxStNrF2lBm64EH@containers-us-west-157.railway.app:6763/railway"  # استبدل هذا بمعلومات الاتصال الخاصة بك
-
-engine = create_engine(db_url)
-
-# تعريف جلسات SQLAlchemy
-Session = sessionmaker(bind=engine)
-session = Session()
-
-# إنشاء قاعدة الجدول
-Base = declarative_base()
-
-class SessionTable(Base):
-    __tablename__ = 'sessions'
-
-    id = Column(Integer, primary_key=True)
-    phone = Column(String)
-    api_id = Column(Integer)
-    api_hash = Column(String)
-
-# إنشاء الجدول إذا لم يكن موجودًا بالفعل
-Base.metadata.create_all(engine)
-
-# الآن لديك اتصالًا بقاعدة البيانات وجاهز لاستخدامه داخل ملف تشغيل البوت الخاص بك.
 
 
 # bot session
@@ -42,14 +15,15 @@ bot = TelegramClient("Bot", api_id_bot, api_hash_bot).start(bot_token=token)
 owner_id = [6699312679]
 collect, bots_to_collect, start_earn = True, [], False
 
-class User(Base):
-    __tablename__ = 'users'
+# LOAD SESSION
+sessions = json.load(open("sessions/sessions.json"))
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String)
-    email = Column(String)
-    # يمكنك تعريف المزيد من الأعمدة حسب احتياجاتك
 
+
+# NEW USERS TO JSON
+async def ToJson(user, path):
+    with open(path, 'w') as file:
+        json.dump(user, file) 
         
 #user info
 api_id = 25230422
@@ -58,8 +32,7 @@ api_hash = "ade18a444a3ca95930a9e5a6a6d8ecb5"
 async def Add_NUMBER(event, api_id, api_hash, phone_number):      
     try:
         phone_number = phone_number.replace('+','').replace(' ', '')
-        session_name = "AlragiBot_" + phone_number
-        iqthon = TelegramClient(session_name, api_id, api_hash)
+        iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
         
         if not await iqthon.is_user_authorized():
@@ -79,12 +52,13 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
                     
                     login = await iqthon.sign_in(phone_number, password=password.text)
 
-                            # إضافة البيانات إلى قاعدة البيانات
-            new_session = SessionTable(phone=phone_number, api_id=api_id, api_hash=api_hash)
-            session.add(new_session)
-            session.commit()
+                # add to json
+                count = f"session_{phone_number}"
+                New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
+                sessions.update(New_item)
 
-        return "تمت إضافة الرقم بنجاح"
+                await ToJson(sessions, "sessions/sessions.json")
+        return "تم اضافة الرقم بنجاح"
     except Exception as error:
         return str(error)
 
@@ -118,27 +92,32 @@ async def Callbacks__(event):
 # DELETE NUMBER TELEGRAM BOT 
 @bot.on(events.CallbackQuery(data="remove_number"))
 async def Callbacks_(event):
-    delete, in_session = await event.delete(), False
+    global sessions
+    
+    delete, sessions, in_session = await event.delete(), json.load(open("sessions/sessions.json")), False
     try:
-        # تحديد الرقم من المستخدم
         async with bot.conversation(event.chat_id, timeout=200) as conv:
-            get_number_message = await conv.send_message("__ارسل الرقم لحذفه__")
-            remove_number_message = await conv.get_response()
-            remove_number = (remove_number_message.text).replace('+', '').replace(' ', '')
-
-        # البحث عن الجلسة التي تحتوي على الرقم وحذفها من قاعدة البيانات
-        session.query(SessionTable).filter(SessionTable.phone == remove_number).delete()
-
-        # تأكيد التغييرات (حفظ الحذف في قاعدة البيانات)
-        session.commit() 
-        in_session = True
+            # verification code
+            get_number= await conv.send_message("__ارسل الرقم لحذفه__")
+            remove_number = await conv.get_response()
+            remove_number = (remove_number.text).replace('+', '').replace(' ', '')
+            for session in sessions:
+                session_number = sessions.get(session).get("phone")
+                if remove_number == session_number:
+                    del sessions[session]
+                    await ToJson(sessions, "sessions/sessions.json")
+                    in_session = True
+                    break
+        
     except Exception as error:
-        print(error)
-
-    if in_session:
+        print (error)
+        
+    if in_session == True:
         await event.reply("تم حذف الرقم بنجاح")
+        sessions = json.load(open("sessions/sessions.json"))
     else:
         await event.reply("هذا الرقم غير موجود")
+        
     if event.chat_id in owner_id:
         await StartButtons(event, 1)
     else:
