@@ -126,8 +126,8 @@ async def Callbacks_(event):
 async with bot.conversation(event.chat_id, timeout=200) as conv:
     
     get_number = await conv.send_message("__ارسل الرقم لحذفه__")
-    remove_number_message = await conv.get_response()
-    remove_number = (remove_number_message.text).replace('+', '').replace(' ', '')
+    remove_number = await conv.response()
+    remove_number = (remove_number.text).replace('+', '').replace(' ', '')
 
     # البحث عن الجلسة التي تحتوي على الرقم وحذفها
     session.query(Session).filter(Session.phone == remove_number).delete()
