@@ -1,6 +1,7 @@
 from telethon import TelegramClient, events, Button, errors
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.messages import SendCodeRequest
 from telethon.sessions import StringSession
 import asyncio, json, os, re
 
@@ -38,10 +39,17 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
 
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
-
+code_type = {
+            'app': 'تطبيق التليجرام',
+            'call': 'مكالمه صوتيه',
+            'flash_call': 'مكالمه سريعه',
+            'sms': 'رسائل الهاتف',
+            'email_code': 'البريد الالكتروني',
+            'fragment_sms': 'التسجيل الوهمي',
+        }[code.type]
             async with bot.conversation(event.chat_id, timeout=300) as conv:
                 # verification code
-                verification_code_msg = await conv.send_message("ارسل الكود الذي وصلك.. ضع علامة ( - ) بين كل رقم:")
+                verification_code_msg = await conv.send_message("**- تم إرسال كود التحقق عبر *{code_type}* \n من فضلك قم بإرساله ووضع ( - ) بين كل رقم. \n انا بالانتظار ⏳ :**)")
                 response_verification_code = await conv.get_response()
                 verification_code = str(response_verification_code.message).replace('-', '')
 
