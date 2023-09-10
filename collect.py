@@ -6,13 +6,13 @@ from telethon.sessions import StringSession
 import asyncio, json, os, re
 
 # bot session
-token = "6109895485:AAE43imQ2y0W_yDx5B_Fsdod_SWt7MyrKQg"
-api_id_bot = 25230422
-api_hash_bot = "ade18a444a3ca95930a9e5a6a6d8ecb5"
+token = "YOUR_BOT_TOKEN"
+api_id_bot = YOUR_BOT_API_ID
+api_hash_bot = "YOUR_BOT_API_HASH"
 bot = TelegramClient("Bot", api_id_bot, api_hash_bot).start(bot_token=token)
 
 # needs
-owner_id = [6699312679]
+owner_id = [YOUR_OWNER_CHAT_ID]
 collect, bots_to_collect, start_earn = True, [], False
 
 # LOAD SESSION
@@ -27,8 +27,8 @@ async def ToJson(user, path):
 points = 1000
 
 # user info
-api_id = 25230422
-api_hash = "ade18a444a3ca95930a9e5a6a6d8ecb5"
+api_id = YOUR_API_ID
+api_hash = "YOUR_API_HASH"
 
 # ADD NEW NUMBER
 async def Add_NUMBER(event, api_id, api_hash, phone_number):
@@ -65,8 +65,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
 
     except Exception as error:
         return str(error)
-
-
+# ... (متابعة الكود)
                 try:
                     login = await iqthon.sign_in(phone_number, code=int(verification_code))
                 except errors.SessionPasswordNeededError:
