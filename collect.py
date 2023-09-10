@@ -38,20 +38,27 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         await iqthon.connect()
 
         if not await iqthon.is_user_authorized():
-            request = await iqthon.send_code_request(phone_number)
-   code_type = {
-            'app': 'تطبيق التليجرام',
-            'call': 'مكالمه صوتيه',
-            'flash_call': 'مكالمه سريعه',
-            'sms': 'رسائل الهاتف',
-            'email_code': 'البريد الالكتروني',
-            'fragment_sms': 'التسجيل الوهمي',
-        }[code.type]
-            async with bot.conversation(event.chat_id, timeout=300) as conv:
-                # verification code
-                verification_code_msg = await conv.send_message("**- تم إرسال كود التحقق عبر *{code_type}* \n من فضلك قم بإرساله ووضع ( - ) بين كل رقم. \n انا بالانتظار ⏳ :**)")
-                response_verification_code = await conv.get_response()
-                verification_code = str(response_verification_code.message).replace('-', '')
+    request = await iqthon.send_code_request(phone_number)
+
+code_type = {
+    'app': 'تطبيق التليجرام',
+    'call': 'مكالمه صوتيه',
+    'flash_call': 'مكالمه سريعه',
+    'sms': 'رسائل الهاتف',
+    'email_code': 'البريد الالكتروني',
+    'fragment_sms': 'التسجيل الوهمي',
+}[code.type]
+
+async with bot.conversation(event.chat_id, timeout=300) as conv:
+    # verification code
+    verification_message = (
+        f"**- تم إرسال كود التحقق عبر *{code_type}*"
+        f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
+        f"\n انا بالانتظار ⏳ :**"
+    )
+    verification_code_msg = await conv.send_message(verification_message)
+    response_verification_code = await conv.get_response()
+    verification_code = str(response_verification_code.message).replace('-', '')
 
                 try:
                     login = await iqthon.sign_in(phone_number, code=int(verification_code))
