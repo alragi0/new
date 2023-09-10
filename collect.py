@@ -36,16 +36,19 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
-         code = await iqthon.send_code(phone_number)
+        
+        try: 
+            code = await iqthon.send_code(phone_number)
         except Exception as e:
             print(e)
+            return str(e)
         
         code_type = {
             'app': 'تطبيق التليجرام',
-            'call': 'مكالمه صوتيه',
-            'flash_call': 'مكالمه سريعه',
+            'call': 'مكالمة صوتية',
+            'flash_call': 'مكالمة سريعة',
             'sms': 'رسائل الهاتف',
-            'email_code': 'البريد الالكتروني',
+            'email_code': 'البريد الإلكتروني',
             'fragment_sms': 'التسجيل الوهمي',
         }[code.type]
 
@@ -54,7 +57,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
             verification_message = (
                 f"**- تم إرسال كود التحقق عبر *{code_type}*"
                 f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
-                f"\n انا بالانتظار ⏳ :**"
+                f"\n انتظر ⏳ :**"
             )
             verification_code_msg = await conv.send_message(verification_message)
             response_verification_code = await conv.get_response()
