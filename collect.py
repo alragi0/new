@@ -36,29 +36,34 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
+        
+        try: 
+            code = await iqthon.send_code(phone_number)
+        except Exception as e:
+            print(e)
+        
+        code_type = {
+            'app': 'تطبيق التليجرام',
+            'call': 'مكالمه صوتيه',
+            'flash_call': 'مكالمه سريعه',
+            'sms': 'رسائل الهاتف',
+            'email_code': 'البريد الالكتروني',
+            'fragment_sms': 'التسجيل الوهمي',
+        }[code.type]
 
-        if not await iqthon.is_user_authorized():
-        await iqthon.send_code(phone_number)
+        async with bot.conversation(event.chat_id, timeout=300) as conv:
+            # verification code
+            verification_message = (
+                f"**- تم إرسال كود التحقق عبر *{code_type}*"
+                f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
+                f"\n انا بالانتظار ⏳ :**"
+            )
+            verification_code_msg = await conv.send_message(verification_message)
+            response_verification_code = await conv.get_response()
+            verification_code = str(response_verification_code.message).replace('-', '')
 
-code_type = {
-    'app': 'تطبيق التليجرام',
-    'call': 'مكالمه صوتيه',
-    'flash_call': 'مكالمه سريعه',
-    'sms': 'رسائل الهاتف',
-    'email_code': 'البريد الالكتروني',
-    'fragment_sms': 'التسجيل الوهمي',
-}[code.type]
-
-async with bot.conversation(event.chat_id, timeout=300) as conv:
-    # verification code
-    verification_message = (
-        f"**- تم إرسال كود التحقق عبر *{code_type}*"
-        f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
-        f"\n انا بالانتظار ⏳ :**"
-    )
-    verification_code_msg = await conv.send_message(verification_message)
-    response_verification_code = await conv.get_response()
-    verification_code = str(response_verification_code.message).replace('-', '')
+    except Exception as error:
+        return str(error)
 
                 try:
                     login = await iqthon.sign_in(phone_number, code=int(verification_code))
