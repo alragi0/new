@@ -37,7 +37,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
 
-     try:
+    try:
          code = await iqthon.send_code(phone_number)
         except Exception as e:
             print(e)
