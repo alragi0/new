@@ -39,7 +39,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
 
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
-code_type = {
+   code_type = {
             'app': 'تطبيق التليجرام',
             'call': 'مكالمه صوتيه',
             'flash_call': 'مكالمه سريعه',
