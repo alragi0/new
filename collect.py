@@ -1,18 +1,18 @@
 from telethon import TelegramClient, events, Button, errors
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.messages import SendCodeRequest
+from telethon.tl.functions.messages import SentCodeType
 from telethon.sessions import StringSession
 import asyncio, json, os, re
 
 # bot session
-token = "YOUR_BOT_TOKEN"
-api_id_bot = YOUR_BOT_API_ID
-api_hash_bot = "YOUR_BOT_API_HASH"
+token = "6109895485:AAE43imQ2y0W_yDx5B_Fsdod_SWt7MyrKQg"
+api_id_bot = 25230422
+api_hash_bot = "ade18a444a3ca95930a9e5a6a6d8ecb5"
 bot = TelegramClient("Bot", api_id_bot, api_hash_bot).start(bot_token=token)
 
 # needs
-owner_id = [YOUR_OWNER_CHAT_ID]
+owner_id = [6699312679]
 collect, bots_to_collect, start_earn = True, [], False
 
 # LOAD SESSION
@@ -27,8 +27,8 @@ async def ToJson(user, path):
 points = 1000
 
 # user info
-api_id = YOUR_API_ID
-api_hash = "YOUR_API_HASH"
+api_id = 25230422
+api_hash = "ade18a444a3ca95930a9e5a6a6d8ecb5"
 
 # ADD NEW NUMBER
 async def Add_NUMBER(event, api_id, api_hash, phone_number):
@@ -36,21 +36,18 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
-            code = await iqthon.send_code(phone_number)
-        except Exception as e:
-            print(e)
-            return str(e)
         
+        if not await iqhon.is_user_authorized():
+           request = await iqhon.send_code_request(phone_number)
         code_type = {
-            'app': 'تطبيق التليجرام',
-            'call': 'مكالمة صوتية',
-            'flash_call': 'مكالمة سريعة',
-            'sms': 'رسائل الهاتف',
-            'email_code': 'البريد الإلكتروني',
-            'fragment_sms': 'التسجيل الوهمي',
-        }[code.type]
-
-        async with bot.conversation(event.chat_id, timeout=300) as conv:
+        SentCodeType.APP: 'تطبيق التليجرام',
+        SentCodeType.CALL: 'مكالمه صوتيه',
+        SentCodeType.FLASH_CALL: 'مكالمه سريعه',
+        SentCodeType.SMS: 'رسائل الهاتف',
+        SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
+        SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
+    }[code.type]
+async with bot.conversation(event.chat_id, timeout=300) as conv:
             # verification code
             verification_message = (
                 f"**- تم إرسال كود التحقق عبر *{code_type}*"
