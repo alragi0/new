@@ -40,7 +40,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
             
-            ## async with bot.conversation(event.chat_id, timeout=300) as conv:
+             async with bot.conversation(event.chat_id, timeout=300) as conv:
                 
                 code_type = {
                     SentCodeType.APP: 'تطبيق التليجرام',
@@ -57,7 +57,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
                     f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
                     f"\n انتظر ⏳ :**"
                 )
-                try:
+                #try:
                     verification_code_msg = await conv.send_message(verification_message)
                     response_verification_code = await conv.get_response()
                     verification_code = str(response_verification_code.message).replace('-', '')
