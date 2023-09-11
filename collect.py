@@ -1,6 +1,7 @@
 from telethon import TelegramClient, events, Button, errors
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.auth import SendCodeRequest
 from telethon.sessions import StringSession
 import asyncio, json, os, re
 
@@ -34,17 +35,23 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
     try:
         phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
-        await iqthon.start(phone_number)
-        
-        if not await iqthon.is_user_authorized():
-            await iqthon.send_code_request(phone_number)
-            verification_code = input(" **- تم إرسال كود التحقق الى الحساب، من فضلك قم بارساله وضع مسافة او علامة  - بين كل رقم ورقم انا بالانتظار: ⏳**")
+        await iqthon.connect()
 
-            try:
-                await iqthon.sign_in(phone_number, code=verification_code)
-            except errors.SessionPasswordNeededError:
-                password = input("**- ❓ الحساب يحتوي على كلمة مرور (التحقق بخطوتين) من فضلك قم بارساله كلمة المرور أنا بالانتظار::**")
-                await iqthon.sign_in(phone_number, password=password)
+        if not await iqthon.is_user_authorized():
+            request = await iqthon.send_code_request(phone_number)
+
+            async with bot.conversation(event.chat_id, timeout=300) as conv:
+                verification_code_msg = await conv.send_message("**- تم إرسال كود التحقق الى الحساب من فضلك قم بارساله الآن انا بالانتظار:**")
+                response_verification_code = await conv.get_response()
+                verification_code = str(response_verification_code.message).replace('-', '')
+
+                try:
+                    login = await iqthon.sign_in(phone_number, code=int(verification_code))
+                except errors.SessionPasswordNeededError:
+                    password_msg = await conv.send_message("**- الحساب محمي بكلمة مرور (التحقق بخطوتين) من فضلك قم بارسال كلمة المرور انا بالانتظار:**")
+                    password = await conv.get_response()
+
+                    login = await iqthon.sign_in(phone_number, password=password.text)
 
             # انضمام إلى القنوات (إذا كان ذلك مطلوبًا)
             try:
