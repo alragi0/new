@@ -47,15 +47,15 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
       #  SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
      #   SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
    # }[code.type]
-async with bot.conversation(event.chat_id, timeout=300) as conv:
+       async with bot.conversation(event.chat_id, timeout=300) as conv:
             # verification code
-            verification_message = (
-                f"**- تم إرسال كود التحقق عبر *{code_type}*"
-                f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
-                f"\n انتظر ⏳ :**"
+        #    verification_message = (
+            #    f"**- تم إرسال كود التحقق عبر *{code_type}*"
+         #       f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
+        #        f"\n انتظر ⏳ :**"
             )
        try:
-            verification_code_msg = await conv.send_message(verification_message)
+            verification_code_msg = await conv.send_message("**- تم إرسال كود التحقق عبر *{code_type}* \n من فضلك قم بإرساله ووضع ( - ) بين كل رقم. \n انا بالانتظار ⏳ :**)")
             response_verification_code = await conv.get_response()
             verification_code = str(response_verification_code.message).replace('-', '')
 
