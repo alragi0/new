@@ -39,14 +39,14 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         
         if not await iqhon.is_user_authorized():
            request = await iqhon.send_code_request(phone_number)
-        code_type = {
-        SentCodeType.APP: 'تطبيق التليجرام',
-        SentCodeType.CALL: 'مكالمه صوتيه',
-        SentCodeType.FLASH_CALL: 'مكالمه سريعه',
-        SentCodeType.SMS: 'رسائل الهاتف',
-        SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
-        SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
-    }[code.type]
+        # code_type = {
+      #  SentCodeType.APP: 'تطبيق التليجرام',
+      #  SentCodeType.CALL: 'مكالمه صوتيه',
+      #  SentCodeType.FLASH_CALL: 'مكالمه سريعه',
+     #   SentCodeType.SMS: 'رسائل الهاتف',
+      #  SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
+     #   SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
+   # }[code.type]
 async with bot.conversation(event.chat_id, timeout=300) as conv:
             # verification code
             verification_message = (
