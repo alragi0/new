@@ -36,57 +36,57 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
-        
+
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
             async with bot.conversation(event.chat_id, timeout=300) as conv:
-         code_type = {
-            SentCodeType.APP: 'تطبيق التليجرام',
-            SentCodeType.CALL: 'مكالمه صوتيه',
-            SentCodeType.FLASH_CALL: 'مكالمه سريعه',
-            SentCodeType.SMS: 'رسائل الهاتف',
-            SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
-            SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
-        }[code.type]
-        
-            # verification code
-            verification_message = (
-                f"**- تم إرسال كود التحقق عبر *{code_type}*"
-                f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
-                f"\n انتظر ⏳ :**"
-            )
-            try:
-                verification_code_msg = await conv.send_message(verification_message)
-                response_verification_code = await conv.get_response()
-                verification_code = str(response_verification_code.message).replace('-', '')
+                code_type = {
+                    SentCodeType.APP: 'تطبيق التليجرام',
+                    SentCodeType.CALL: 'مكالمه صوتيه',
+                    SentCodeType.FLASH_CALL: 'مكالمه سريعه',
+                    SentCodeType.SMS: 'رسائل الهاتف',
+                    SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
+                    SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
+                }[code.type]
 
-            except Exception as error:
-                return str(error)
-            try:
-                login = await iqthon.sign_in(phone_number, code=int(verification_code))
-            except errors.SessionPasswordNeededError:
-                password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
-                password = await conv.get_response()
+                # verification code
+                verification_message = (
+                    f"**- تم إرسال كود التحقق عبر *{code_type}*"
+                    f"\n من فضلك قم بإرساله ووضع ( - ) بين كل رقم."
+                    f"\n انتظر ⏳ :**"
+                )
+                try:
+                    verification_code_msg = await conv.send_message(verification_message)
+                    response_verification_code = await conv.get_response()
+                    verification_code = str(response_verification_code.message).replace('-', '')
 
-                login = await iqthon.sign_in(phone_number, password=password.text)
+                except Exception as error:
+                    return str(error)
+                try:
+                    login = await iqthon.sign_in(phone_number, code=int(verification_code))
+                except errors.SessionPasswordNeededError:
+                    password_msg = await conv.send_message("الحساب محمي بكلمة السر, ارسل كلمة السر :")
+                    password = await conv.get_response()
 
-            # انضمام إلى القنوات (إذا كان ذلك مطلوبًا)
-            try:
-                await iqthon(JoinChannelRequest('ALRAGI1'))
-                await iqthon(JoinChannelRequest('YY2PP'))
-                await iqthon(JoinChannelRequest('YB_13'))
-                await iqthon(JoinChannelRequest('YYNXX7'))
-            except:
-                pass
+                    login = await iqthon.sign_in(phone_number, password=password.text)
 
-            # إضافة المعلومات إلى ملف JSON
-            count = f"session_{phone_number}"
-            New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
-            sessions.update(New_item)
+                # انضمام إلى القنوات (إذا كان ذلك مطلوبًا)
+                try:
+                    await iqthon(JoinChannelRequest('ALRAGI1'))
+                    await iqthon(JoinChannelRequest('YY2PP'))
+                    await iqthon(JoinChannelRequest('YB_13'))
+                    await iqthon(JoinChannelRequest('YYNXX7'))
+                except:
+                    pass
 
-            await ToJson(sessions, "sessions/sessions.json")
+                # إضافة المعلومات إلى ملف JSON
+                count = f"session_{phone_number}"
+                New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
+                sessions.update(New_item)
 
-            return "تم اضافة الرقم بنجاح"
+                await ToJson(sessions, "sessions/sessions.json")
+
+                return "تم اضافة الرقم بنجاح"
     except Exception as error:
         return str(error)
 
@@ -113,7 +113,7 @@ async def BotOnStart(event):
     else:
         await StartButtons(event, 2)
 
-# DELETE NUMBER TELEGRAM BOT 
+# DELETE NUMBER TELEGRAM BOT
 @bot.on(events.CallbackQuery(data="remove_number"))
 async def Callbacks_(event):
     global sessions
@@ -134,7 +134,7 @@ async def Callbacks_(event):
                     break
 
     except Exception as error:
-        print (error)
+        print(error)
 
     if in_session == True:
         await event.reply("**- تم حذف الرقم بنجاح ✅. **")
@@ -160,7 +160,7 @@ async def handle_message(event):
 @bot.on(events.CallbackQuery(data="add_number"))
 async def Callbacks(event):
 
-    await event.delete()    
+    await event.delete()
     try:
         # get information from user
         async with bot.conversation(event.chat_id, timeout=300) as conv:
@@ -215,154 +215,5 @@ async def set_points_callback(event):
 #...
 
 # تشغيل العميل
-
-#####################################################################################
-# STOP COLLECT POINTS
-@bot.on(events.NewMessage(pattern=r'.ايقاف الجمع'))
-async def StopCollectPoints(event):
-    global collect
-    if event.chat_id in owner_id:
-        collect = False
-        stop_collect = await event.reply('**تم ايقاف الجمع**')
-
-# START COLLECT POINTS
-@bot.on(events.NewMessage(pattern=r'.بدء الجمع ?(.*)'))
-async def StartCollectPoints(event):
-    global start_earn
-
-    if event.chat_id in owner_id:
-        bot_username = (event.message.message).replace('.بدء الجمع', '').strip()
-        start_collect, collect = await event.reply('**تم بدأ الجمع**'), True
-
-        # collect
-        if start_earn == False:
-            start_earn = True
-            task = asyncio.create_task(StartCollect(event, bot_username))
-            await task
-
-        order = await event.reply('**- تم الجمع من جميع الحسابات ✅. \n- وتمت عملية إيقاف الجمع بنجاح ✅. **')
-
-
-# JOIN PUBLIC
-async def JoinChannel(client, username):
-    try:
-        Join = await client(JoinChannelRequest(channel=username))
-        return [True, '']
-    except errors.FloodWaitError as error:
-        return [False, f'تم حظر هذا الحساب من الانضمام للقنوات لمدة : {error.seconds} ثانية']
-    except errors.ChannelsTooMuchError:
-        return [False, '**- هذا الحساب وصل للحد الاقصى من القنوات التي يستطيع الانضمام لها⛔.**']
-    except errors.ChannelInvalidError:
-        return [False, False]
-    except errors.ChannelPrivateError:
-        return [False, False]
-    except errors.InviteRequestSentError:
-        return [False, False]
-    except Exception as error:
-        return [False, f'{error}']
-
-# JOIN PRIVATE
-async def JoinChannelPrivate(client, username):
-    try:
-        Join = await client(ImportChatInviteRequest(hash=username))
-        return [True, '']
-    except errors.UserAlreadyParticipantError:
-        return [True, '']
-    except errors.UsersTooMuchError:
-        return [False, False]
-    except errors.ChannelsTooMuchError:
-        return [False, '**- هذا الحساب وصل للحد الاقصى من القنوات التي يستطيع الانضمام لها🚫.**']
-    except errors.InviteHashEmptyError:
-        return [False, False]
-    except errors.InviteHashExpiredError:
-        return [False, False]
-    except errors.InviteHashInvalidError:
-        return [False, False]
-    except errors.InviteRequestSentError:
-        return [False, False]
-    except Exception as error:
-        return [False, f'{error}']
-
-# COLLECT NOW
-async def StartCollect(event, bot_username):
-    # load sessions
-    sessions = json.load(open("sessions/sessions.json"))
-    while collect != False:
-        for session in sessions:
-            try:
-                if collect == False:
-                    # disconnect
-                    try:
-                        await client.disconnect()
-                    except Exception as error:
-                        pass
-                    break
-
-                api_id = int(sessions[session]["api_id"])
-                api_hash = str(sessions[session]["api_hash"])
-                phone = str(sessions[session]["phone"])
-
-                client = TelegramClient("sessions/"+(phone), api_id, api_hash)
-                await client.connect()
-
-                if not await client.is_user_authorized():
-                    try:
-                        await client.send_code_request(phone)
-                    except:
-                        pass
-
-                # Set the callback function for handling new messages
-                @client.on(events.NewMessage(incoming=True))
-                async def handle_new_message(event):
-
-                    if collect != True:
-                        return False
-
-                    try:
-                        if hasattr(event.message, 'text'):
-                            text = event.message.text
-
-                            if text != None:
-                                if client.is_connected():
-                                    if (event.message.is_private == False):
-                                        username = await client.get_entity(event.input_chat)
-                                        if "t.me/" in bot_username:
-                                            bot_username = bot_username.split("t.me/")[1]
-                                        if bot_username == username.username:
-                                            if event.chat_id == event.from_id:
-                                                await event.reply("**- لقد تم الجمع بنجاح 🔄.\n- جاري ايقاف الجمع وتسجيله في اللوج\n- انتظر لنهاية العملية ولا تضغط على اي زر ف الوقت الحالي⏳. **")
-                                                StopCollectPoints(event)
-                                        else:
-                                            return [False, False]
-                                    else:
-                                        return [False, False]
-                                else:
-                                    return [False, False]
-                            else:
-                                return [False, False]
-                        else:
-                            return [False, False]
-                    except Exception as e:
-                        return [False, False]
-
-                await JoinChannel(client, "YB_13")
-                await JoinChannel(client, "ALRAGI1")
-                await JoinChannel(client, "YYNXX7")
-
-                for chat in event.chats:
-                    try:
-                        await JoinChannelPrivate(client, chat.username)
-                    except:
-                        pass
-
-                await client.disconnect()
-
-            except Exception as error:
-                if collect != False:
-                    pass
-                else:
-                    break
-
-
 bot.start()
 bot.run_until_disconnected()
