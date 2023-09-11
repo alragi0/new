@@ -48,7 +48,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
             SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
         }[code.type]
         
-        async with bot.conversation(event.chat_id, timeout=300) as conv:
+       # async with bot.conversation(event.chat_id, timeout=300) as conv:
             # verification code
             verification_message = (
                 f"**- تم إرسال كود التحقق عبر *{code_type}*"
