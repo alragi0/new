@@ -40,7 +40,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
             
-            async with bot.conversation(event.chat_id, timeout=300) as conv:
+            ## async with bot.conversation(event.chat_id, timeout=300) as conv:
                 
                 code_type = {
                     SentCodeType.APP: 'تطبيق التليجرام',
