@@ -1,7 +1,6 @@
 from telethon import TelegramClient, events, Button, errors
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.auth import SendCodeRequest
 from telethon.sessions import StringSession
 import asyncio, json, os, re
 
