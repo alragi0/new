@@ -85,8 +85,6 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
     except Exception as error:
         await event.reply(f"حدث خطأ: {str(error)}")
 
-
-
                 # إضافة المعلومات إلى ملف JSON
                 count = f"session_{phone_number}"
                 New_item = {count: {"phone": phone_number, "api_id": api_id, "api_hash": api_hash}}
