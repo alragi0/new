@@ -33,7 +33,6 @@ api_hash = "YOUR_API_HASH"
 # ADD NEW NUMBER
 async def Add_NUMBER(event, api_id, api_hash, phone_number):
     try:
-    try:
         phone_number = phone_number.replace('+', '').replace(' ', '')
         iqthon = TelegramClient("sessions/"+phone_number+".session", api_id, api_hash)
         await iqthon.connect()
