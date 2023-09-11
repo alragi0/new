@@ -39,10 +39,8 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
 
         if not await iqthon.is_user_authorized():
             request = await iqthon.send_code_request(phone_number)
-         except:
-             await conv.send_message("حدث خطا")
-             async with bot.conversation(event.chat_id, timeout=300) as conv:
-                
+            
+            async with bot.conversation(event.chat_id, timeout=300) as conv:
                 code_type = {
                     SentCodeType.APP: 'تطبيق التليجرام',
                     SentCodeType.CALL: 'مكالمه صوتيه',
@@ -50,7 +48,7 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
                     SentCodeType.SMS: 'رسائل الهاتف',
                     SentCodeType.EMAIL_CODE: 'البريد الالكتروني',
                     SentCodeType.FRAGMENT_SMS: 'التسجيل الوهمي',
-                }[code.type]
+                }[request.type]
 
                 # verification code
                 verification_message = (
@@ -64,7 +62,9 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
                     verification_code = str(response_verification_code.message).replace('-', '')
 
                 except Exception as error:
-                    return str(error)
+                    await conv.send_message(str(error))
+                    return
+
                 try:
                     login = await iqthon.sign_in(phone_number, code=int(verification_code))
                 except errors.SessionPasswordNeededError:
@@ -81,6 +81,11 @@ async def Add_NUMBER(event, api_id, api_hash, phone_number):
                     await iqthon(JoinChannelRequest('YYNXX7'))
                 except:
                     pass
+
+    except Exception as error:
+        await event.reply(f"حدث خطأ: {str(error)}")
+
+
 
                 # إضافة المعلومات إلى ملف JSON
                 count = f"session_{phone_number}"
